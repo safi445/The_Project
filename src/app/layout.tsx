@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Camera, History, Scissors, User } from "lucide-react";
+import { Camera, History, Scissors, User, GraduationCap } from "lucide-react";
 import Link from "next/link";
 
 const geistSans = Geist({
@@ -51,6 +51,10 @@ export default function RootLayout({
           <Link href="/recommendations" className="flex flex-col items-center gap-1 text-slate-500 hover:text-indigo-600 transition-colors">
             <Scissors className="w-6 h-6" />
             <span className="text-xs font-medium">Styles</span>
+          </Link>
+          <Link href="/training" className="flex flex-col items-center gap-1 text-slate-500 hover:text-indigo-600 transition-colors">
+            <GraduationCap className="w-6 h-6" />
+            <span className="text-xs font-medium">Learn</span>
           </Link>
           <Link href="/history" className="flex flex-col items-center gap-1 text-slate-500 hover:text-indigo-600 transition-colors">
             <History className="w-6 h-6" />

@@ -9,14 +9,12 @@ interface CameraViewProps {
   onAnalysisComplete: (result: FaceAnalysisResult) => void;
   selectedHaircutId?: string;
   selectedBeardId?: string;
-  isLocked?: boolean;
 }
 
 export default function CameraView({
   onAnalysisComplete,
   selectedHaircutId,
-  selectedBeardId,
-  isLocked = false
+  selectedBeardId
 }: CameraViewProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -24,7 +22,6 @@ export default function CameraView({
   const [countdown, setCountdown] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [landmarks, setLandmarks] = useState<any>(null);
-  const [dimensions, setDimensions] = useState({ width: 640, height: 480 });
 
   useEffect(() => {
     let faceMesh: any;
@@ -45,7 +42,7 @@ export default function CameraView({
         }
 
         faceMesh = new FaceMeshConstructor({
-          locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`,
+          locateFile: (file: string) => `/mediapipe/${file}`,
         });
 
         faceMesh.setOptions({
@@ -82,7 +79,7 @@ export default function CameraView({
         if (videoRef.current) {
           camera = new CameraConstructor(videoRef.current, {
             onFrame: async () => {
-              if (videoRef.current && faceMesh && !isLocked) {
+              if (videoRef.current && faceMesh) {
                 await faceMesh.send({ image: videoRef.current });
               }
             },
@@ -103,7 +100,7 @@ export default function CameraView({
       if (faceMesh) faceMesh.close();
       if (camera) camera.stop?.();
     };
-  }, [isAnalyzing, countdown, onAnalysisComplete, isLocked]);
+  }, [isAnalyzing, countdown, onAnalysisComplete]);
 
   const startAnalysis = () => {
     setIsAnalyzing(true);
@@ -139,24 +136,26 @@ export default function CameraView({
         />
       )}
 
-      {!error && !isLocked && (
+      {!error && (
         <>
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-8 bg-gradient-to-t from-black/60 to-transparent">
-            {countdown !== null && countdown > 0 ? (
-              <div className="text-white text-6xl font-bold mb-8 animate-ping">{countdown}</div>
-            ) : (
-              <button
-                onClick={startAnalysis}
-                disabled={isAnalyzing}
-                className="px-8 py-4 bg-indigo-600 text-white rounded-full font-bold text-lg shadow-lg hover:bg-indigo-700 transition-all disabled:bg-slate-400"
-              >
-                {isAnalyzing ? 'Scanning...' : 'Scan Face (3s)'}
-              </button>
-            )}
-          </div>
+          {(!selectedHaircutId || isAnalyzing) && (
+            <div className="absolute inset-0 flex flex-col items-center justify-end pb-8 bg-gradient-to-t from-black/60 to-transparent">
+              {countdown !== null && countdown > 0 ? (
+                <div className="text-white text-6xl font-bold mb-8 animate-ping">{countdown}</div>
+              ) : (
+                <button
+                  onClick={startAnalysis}
+                  disabled={isAnalyzing}
+                  className="px-8 py-4 bg-indigo-600 text-white rounded-full font-bold text-lg shadow-lg hover:bg-indigo-700 transition-all disabled:bg-slate-400"
+                >
+                  {isAnalyzing ? 'Scanning...' : 'Scan Face (3s)'}
+                </button>
+              )}
+            </div>
+          )}
           <div className="absolute top-4 left-4 right-4 text-center">
             <p className="text-white/80 text-sm font-medium bg-black/40 backdrop-blur-md py-2 px-4 rounded-full inline-block">
-              {selectedHaircutId ? 'Try-on Active' : 'Position your face in the center'}
+              {selectedHaircutId ? 'Live AR Active' : 'Position your face in the center'}
             </p>
           </div>
         </>

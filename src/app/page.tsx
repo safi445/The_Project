@@ -77,7 +77,6 @@ export default function Home() {
           onAnalysisComplete={handleAnalysisComplete}
           selectedHaircutId={currentHaircut?.id}
           selectedBeardId={currentBeard?.id}
-          isLocked={mode === 'result'}
         />
 
         {mode === 'result' && recommendations && (
